@@ -1,0 +1,48 @@
+services:
+  backend:
+    container_name: backend_container
+    build:
+      context: ./backend
+    environment:
+      PORT: 8000
+      SECRET_OR_KEY: CodeCamp15
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mysql
+    networks:
+      - todo-network
+    restart: always
+
+  frontend:
+    container_name: frontend_container
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - todo-network
+    restart: always
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: simple-todo-list
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_storage:/var/lib/mysql
+    networks:
+      - todo-network
+
+volumes:
+  mysql_storage:
+  backend_storage:
+
+networks:
+  todo-network:
+    driver: bridge
